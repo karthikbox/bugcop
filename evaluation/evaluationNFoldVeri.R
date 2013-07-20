@@ -1,4 +1,4 @@
-thedata <- read.csv("/home/karthik/r/EclipseJDT-CK-OO-DEP.csv" , header=T, sep=",")
+thedata <- read.csv("/home/karthik/r/EclipseJDT-CK-OO-DEP1.csv" , header=T, sep=",")
 set.seed(98052)
 x<-as.data.frame(scale(thedata[,-18]))
 y<-thedata[,18]
@@ -19,9 +19,9 @@ locLinesArray=matrix(data=NA,nrow=20,ncol=N)
 for(run in 1:N){
 
 idxs <- sample(1:nrow(data), nrow(data)*2/3, F)
-#fit <- lm(y ~ ., data=data[idxs,])
-fit<-lm(formula = y ~ cbo + fanIn + fanOut + numberOfAttributes+numberOfLinesOfCode+ numberOfMethods+numberOfPublicMethods+rfc+wmc,data = data[idxs, ])
-#step(fit,direction="backward")
+fit <- lm(y ~ ., data=data[idxs,])
+#fit<-lm(formula = y ~ cbo + fanIn + fanOut + numberOfAttributes+numberOfLinesOfCode+ numberOfMethods+numberOfPublicMethods+rfc+wmc,data = data[idxs, ])
+fit=step(fit,direction="backward")
 newdata1=data
 newdata=newdata1[-idxs,]
 prediction <- predict(fit, newdata)
@@ -144,14 +144,25 @@ predictedLoc[i]=mean(predictedLinesArray[i,])
 lines[i]=mean(locBugArray[i,])
 linesLoc[i]=mean(locLinesArray[i,])
 }
+output=matrix(data=NA,nrow=20,ncol=3)
+output1=matrix(data=NA,nrow=20,ncol=3)
+
+output[,1]=rev(actual)
+output[,2]=rev(predicted)
+output[,3]=rev(lines)
+output1[,1]=rev(actualLoc)
+output1[,2]=rev(predictedLoc)
+output1[,3]=rev(linesLoc)
+
+
 # un comment from here to end
 # output=data.frame(100-percentiles,actualLoc,predictedLoc,linesLoc)
-# output=round(output,4)
-# write.table(output[,1:4], "out.csv", sep=",") 
+ output=round(output,4)
+ write.table(output, "out.csv", sep=",") 
 # 
 # output=data.frame(100-percentiles,actual,predicted,lines)
-# output=round(output,4)
-# write.table(output[,1:4], "out1.csv", sep=",") 
+ output1=round(output1,4)
+ write.table(output1, "out1.csv", sep=",") 
 # 
 # performance=rep(NA,20)
 # for(i in 1:20){
