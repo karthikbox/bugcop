@@ -1,4 +1,4 @@
-thedata <- read.csv("/home/karthik/r/EclipseJDT-CK-OO-DEP.csv" , header=T, sep=",")
+thedata <- read.csv("/home/karthik/r/mylin3.csv" , header=T, sep=",")
 set.seed(98052)
 x<-as.data.frame(scale(thedata[,1:4]))
 y<-thedata[,5]
@@ -26,7 +26,7 @@ for(run in 1:N){
   newdata=newdata1[-idxs,]
   prediction <- predict(fit, newdata)
   #quantile(prediction,c(0.5,0.55,0.6,0.65,0.7,0.75,0.8,0.85,0.9,0.95) )
-  
+  len=length(newdata[,1])
   withPrediction=data.frame(pred=prediction,newdata)
   names=as.numeric(row.names(withPrediction))
   newdata2=data.frame(names=names,withPrediction)  
@@ -37,7 +37,7 @@ for(run in 1:N){
   
   
   
-  n=333
+  n=len
   percentileRanksPredicted=rep(NA,n)
   percentileRanksActual=rep(NA,n)
   for(i in 1:n){
@@ -60,7 +60,7 @@ for(run in 1:N){
   for(i in percentiles){
     sum=0
     sumLines=0
-    for(j in 1:333){
+    for(j in 1:len){
       if(finalData[j,1]>=i){
         sum=sum+finalData[j,4]
         sumLines=sumLines+finalData[j,9]
@@ -90,7 +90,7 @@ for(run in 1:N){
   for(i in percentiles){
     sum=0
     sumLines=0
-    for(j in 1:333){
+    for(j in 1:len){
       if(finalData1[j,1]>=i){
         sum=sum+finalData1[j,4]
         sumLines=sumLines+finalData1[j,9]
