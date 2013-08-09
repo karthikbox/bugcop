@@ -29,10 +29,21 @@ len1=length(thedata[,5])
 np=sum(thedata[,5])
 nn=len1-np
 ntot=np+nn
+
+##individual components
+recPos=rep(NA,N)
+recNeg=rep(NA,N)
+precPos=rep(NA,N)
+precNeg=rep(NA,N)
+##end
+
 recall=rep(NA,N)
 accuracy=rep(NA,N)
 precision=rep(NA,N)
 
+
+bugSum1=rep(NA,N)
+locSum1=rep(NA,N)
 
 for(run in 1:50){
   
@@ -73,6 +84,27 @@ for(run in 1:50){
   
   bugsTotal=sum(finalData$actualBugs)
   linesTotal=sum(finalData$loc)
+  
+  ###predicted bugs and loc fraction
+  pred1=pred>=0.5
+  bugPresence=data[-idxs,1]==1
+  newdata1=data.frame(pred1=pred1,withLoc)
+  newdata2=data.frame(bugPresence=bugPresence,newdata1)
+  bugSum=0
+  locSum=0
+  for(i in 1:len){
+    if(newdata2[i,2]==TRUE){
+      #print(i)
+      bugSum=newdata2[i,4]+bugSum
+      locSum=newdata2[i,3]+locSum
+    }
+  }
+  bugSum1[run]=bugSum/bugsTotal
+  locSum1[run]=locSum/linesTotal
+  
+  ##end
+  
+  
   
   logitSum=rep(NA,20)
   logitLines=rep(NA,20)
@@ -182,6 +214,13 @@ for(run in 1:50){
   recallNegative<- TN / (TN + FP)
   recall[run] <- (np/ntot)*recallPossitive + (nn/ntot)*recallNegative
   
+  ##individual components
+  recPos[run]=recallPossitive
+  recNeg[run]=recallNegative
+  precPos[run]=precisionPossitive
+  precNeg[run]=precisionNegative
+  ##end
+  
   accuracy[run] <- (TP + TN) / (TN + FN + FP + TP)
   
   
@@ -207,6 +246,30 @@ prec=mean(precision)
 rec=round(rec*100,4)
 prec=round(prec*100,4)
 acc=round(acc*100,4)
+
+##predicted bugs and loc fraction
+bugSum=round(mean(bugSum1),4)
+locSum=round(mean(locSum1),4)
+
+bugSum
+locSum
+##end
+##individual components
+recPosMean=round(mean(recPos),4)
+recNegMean=round(mean(recNeg),4)
+precPosMean=round(mean(precPos),4)
+precNegMean=round(mean(precNeg),4)
+
+recPosMean
+recNegMean
+precPosMean
+precNegMean
+ntot
+np
+nn
+##end
+
+
 
 output=matrix(data=NA,nrow=20,ncol=3)
 output1=matrix(data=NA,nrow=20,ncol=3)
